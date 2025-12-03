@@ -1,0 +1,26 @@
+* {
+  font-family: cursive
+}
+
+body{
+  background-color: white;
+}
+
+.card-serach-result{
+  display: flex;
+  cursor: pointer;
+}
+
+.capa-playing{
+  width: 400px;
+  height: 400px;
+}
+
+.capa-preview{
+  width: 120px;
+  height: 120px;
+}
+
+.video-container{
+  display: none;
+}
