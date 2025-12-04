@@ -54,14 +54,14 @@ main>div {
 }
 
 .container-progress {
-  border: 1px solid black;
+  border: 1px solid var(--black);
   height: 32px;
   width: 400px;
 }
 
 .progress {
   height: 100%;
-  background-color: green;
+  background-color: rgb(49, 211, 0);
   width: 0%;
 }
 

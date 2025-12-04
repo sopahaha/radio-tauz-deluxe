@@ -48,7 +48,8 @@ function App() {
     return searchedData
   }
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    e.preventDefault()
     const searchedData = searchData()
 
     setSearchResult(searchedData)
@@ -106,8 +107,11 @@ function App() {
       <div>
 
         <div>
-          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-          <button onClick={handleSearch}>pesquianr</button>
+          <form action="" onSubmit={handleSearch}>
+
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <button type='submit'>pesquianr</button>
+          </form>
         </div>
 
         {
