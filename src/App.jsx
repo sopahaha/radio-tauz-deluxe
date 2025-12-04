@@ -26,7 +26,6 @@ function App() {
 
   const addFila = (video) => {
     setSearch("")
-    setSearchResult([])
     setFilaSongs(prev => [...prev, video])
   }
 
@@ -105,14 +104,6 @@ function App() {
 
 
       <div>
-
-        <div>
-          <form action="" onSubmit={handleSearch}>
-
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-            <button type='submit'>pesquianr</button>
-          </form>
-        </div>
 
         {
           searchResult.length > 0 && (
