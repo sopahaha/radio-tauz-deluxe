@@ -1,15 +1,8 @@
-import { ChevronFirst, ChevronLast, Pause, Play } from 'lucide-react'
+import { ChevronFirst, ChevronLast, Pause, Play, Regex } from 'lucide-react'
 import './App.css'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import ReactPlayer from "react-player"
-
-const musicas = [
-  'IfXZWup8LMs',
-  'LDsGMiv2NQw',
-  '9hI3iWRWABA',
-  'drqwogSEgTo',
-]
+import data from './data.json'
 
 function App() {
 
@@ -19,19 +12,14 @@ function App() {
 
   const [currentSong, setCurrentSong] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [filaSongs, setFilaSongs] = useState([])
 
   const [search, setSearch] = useState("")
-  const [searchResult, setSearchResult] = useState([])
+  const [searchResult, setSearchResult] = useState(data)
+  const [filaSongs, setFilaSongs] = useState([])
 
 
   const handleClick = () => {
-
     setPlaying(!playing)
-  }
-
-  function formatTwoDigits(num) {
-    return String(num).padStart(2, '0');
   }
 
   const addFila = (video) => {
@@ -40,119 +28,121 @@ function App() {
     setFilaSongs(prev => [...prev, video])
   }
 
-  const fetchData = async () => {
-    const api_key = import.meta.env.VITE_GOOGLE_API_KEY
-    let items
-    await axios.get(`https://www.googleapis.com/youtube/v3/search/?key=${api_key}&part=snippet&q=youtu.be/${search} rap`).then((res) => {
-      items = res.data.items
-    })
-    return items
-  }
-
   useEffect(() => {
     if (filaSongs.length > 0) {
       setCurrentSong(filaSongs[currentIndex])
     }
   }, [currentIndex, filaSongs])
 
-  const handleSearch = async () => {
-    const response = await fetchData()
+  const searchData = () => {
+    const searchedData = []
 
-    const raps = []
-
-    response.forEach(video => {
-      const tituloVideo = video.snippet.title
-      if (tituloVideo.match(/tauz/i)) {
-        raps.push({
-          id: video.id.videoId,
-          canal: video.snippet.channelTitle,
-          titulo: video.snippet.title,
-          capa: video.snippet.thumbnails.high.url,
-        })
+    data.forEach((item) => {
+      if (item.titulo.match(new RegExp(search, 'gi'))) {
+        searchedData.push(item)
       }
-    });
+    })
 
-    if (raps.length > 0) {
-      setSearchResult(raps)
-    } else {
-      console.log('Não foram encontrados nenhum rap do tauz')
-    }
+    return searchedData
+  }
 
-    // console.log(response)
+  const handleSearch = async () => {
+    const searchedData = searchData()
+
+    setSearchResult(searchedData)
   }
 
 
+
+
   return (
-    <>
-      <h1>radio player tauz - deluxe</h1>
+    <main>
+      <div>
+        <h1>radio player tauz - deluxe</h1>
 
-      {currentSong && (
-        <div>
-          <div className='video-container'>
-            <ReactPlayer volume={1} playing={playing} src={`https://www.youtube.com/watch?v=${currentSong.id}`} onTimeUpdate={(e) => setCurrentTime(e.target.api.getCurrentTime().toFixed(0))} />
-          </div>
-          <img className='capa-playing' src={currentSong.capa} alt="" />
-          <p>{Math.trunc(currentTime / 60)}:{currentTime % 60}</p>
+        {currentSong && (
           <div>
-            <button onClick={
-              () => {
-                setCurrentIndex(prev => prev - 1)
-                setCurrentTime(0)
-              }
-            }>
-              <ChevronFirst />
-            </button>
-            <button onClick={handleClick}>
-              {playing ? <Pause /> : <Play />}
-            </button>
-            <button onClick={
-              () => {
-                setCurrentIndex(prev => prev + 1)
-                setCurrentTime(0)
-              }
-            }>
-              <ChevronLast />
-            </button>
-          </div>
-        </div>
-      )
-      }
-
-
-      <div>
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
-        <button onClick={handleSearch}>pesquianr</button>
-      </div>
-
-      <div>
-        <h2>pesquisa</h2>
-        {searchResult.length > 0 && searchResult.map((item) => (
-          <div className='card-serach-result' onClick={() => { addFila(item) }} key={item.id}>
-            <img className='capa-preview' src={item.capa} alt="" />
+            <div className='video-container'>
+              <ReactPlayer volume={1} playing={playing} src={`https://www.youtube.com/watch?v=${currentSong.id}`} onTimeUpdate={(e) => setCurrentTime(e.target.api.getCurrentTime())} onDurationChange={(e) => setDurationTime(e.target.api.getDuration())} />
+            </div>
+            <img className='capa-playing' src={currentSong.capa} alt="" />
+            <div className='container-progress'>
+              <div className='progress' style={{ width: `${(100 * currentTime) / durationTime}%` }}></div>
+            </div>
+            <p>{Math.trunc((currentTime.toFixed(0)) / 60)}:{(currentTime.toFixed(0)) % 60}</p>
             <div>
-              <p>{item.titulo}</p>
-              <p>{item.canal}</p>
+              <button disabled={currentIndex <= 0} onClick={
+                () => {
+                  if (currentIndex <= 0) return
+                  setCurrentIndex(prev => prev - 1)
+                  setCurrentTime(0)
+                }
+              }>
+                <ChevronFirst />
+              </button>
+              <button onClick={handleClick}>
+                {playing ? <Pause /> : <Play />}
+              </button>
+              <button disabled={filaSongs.length === currentIndex + 1} onClick={
+                () => {
+                  if (filaSongs.length === currentIndex + 1) return
+                  setCurrentIndex(prev => prev + 1)
+                  setCurrentTime(0)
+                }
+              }>
+                <ChevronLast />
+              </button>
             </div>
           </div>
-        ))}
+        )
+        }
       </div>
 
-      {
-        filaSongs.length > 0 && (
-          <div>
-            <h2>playlist</h2>
-            {filaSongs.map((item,index) => (
-              <div key={item.id} className='card-serach-result' onClick={()=>setCurrentIndex(index)}>
-                <img className='capa-preview' src={item.capa} alt="" />
-                <div>
-                  <p>{item.titulo}</p>
-                  <p>{item.canal}</p>
-                </div>
+
+      <div>
+
+        <div>
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <button onClick={handleSearch}>pesquianr</button>
+        </div>
+
+        {
+          searchResult.length > 0 && (
+            <div>
+              <h2>pesquisa</h2>
+              <div className='list-container'>
+                {searchResult.map((item) => (
+                  <div className='card-serach-result' onClick={() => { addFila(item) }} key={item.id}>
+                    <img className='capa-preview' src={item.capa} alt="" />
+                    <div>
+                      <p>{item.titulo}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )
-      }
+            </div>
+          )
+        }
+
+        {
+          filaSongs.length > 0 && (
+            <div>
+              <h2>playlist</h2>
+              <div className='list-container'>
+                {filaSongs.map((item, index) => (
+                  <div key={item.id} className='card-serach-result' onClick={() => setCurrentIndex(index)}>
+                    <img className='capa-preview' src={item.capa} alt="" />
+                    <div>
+                      <p>{item.titulo}</p>
+                      <p>{item.canal}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        }
+      </div>
 
       {/* <div>
         <p>
@@ -161,7 +151,7 @@ function App() {
       </div>
 
  */}
-    </>
+    </main>
 
   )
 }

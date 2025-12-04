@@ -24,3 +24,28 @@ body{
 .video-container{
   display: none;
 }
+
+main{
+  display: flex;
+}
+
+main > div{
+  flex: 1;
+}
+
+.container-progress{
+  border: 1px solid black;
+  height: 32px;
+  width: 400px;
+}
+
+.progress{
+  height: 100%;
+  background-color: green;
+  width: 0%;
+}
+
+.list-container{
+  max-height: 400px;
+  overflow-y: scroll;
+}
