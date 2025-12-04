@@ -2,50 +2,75 @@
   font-family: cursive
 }
 
-body{
-  background-color: white;
+:root {
+  --white: white;
+  --black: black;
 }
 
-.card-serach-result{
+body,
+#root,
+html {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+main {
+  background-color: var(--white);
+  color: var(--black);
+  height: 100%;
+}
+
+.darkmode {
+  --white: black;
+  --black: white;
+}
+
+.card-serach-result {
   display: flex;
   cursor: pointer;
 }
 
-.capa-playing{
+.capa-playing {
   width: 400px;
   height: 400px;
 }
 
-.capa-preview{
+.capa-preview {
   width: 120px;
   height: 120px;
 }
 
-.video-container{
+.video-container {
   display: none;
 }
 
-main{
+main {
   display: flex;
 }
 
-main > div{
+main>div {
   flex: 1;
 }
 
-.container-progress{
+.container-progress {
   border: 1px solid black;
   height: 32px;
   width: 400px;
 }
 
-.progress{
+.progress {
   height: 100%;
   background-color: green;
   width: 0%;
 }
 
-.list-container{
+.list-container {
   max-height: 400px;
   overflow-y: scroll;
+}
+
+.codigo-fonte {
+  position: absolute;
+  bottom: 40px;
 }

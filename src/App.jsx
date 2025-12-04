@@ -10,6 +10,8 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0)
   const [durationTime, setDurationTime] = useState(0)
 
+  const [darkMode, setDarkmode] = useState(true)
+
   const [currentSong, setCurrentSong] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -56,9 +58,11 @@ function App() {
 
 
   return (
-    <main>
+    <main className={`${darkMode && 'darkmode'}`}>
       <div>
         <h1>radio player tauz - deluxe</h1>
+        <input checked={darkMode} type="checkbox" name="" id="" onChange={(e) => setDarkmode(e.target.checked)} />
+        <p className='codigo-fonte'>codigo fonte: https://github.com/sopahaha/radio-tauz-deluxe</p>
 
         {currentSong && (
           <div>
